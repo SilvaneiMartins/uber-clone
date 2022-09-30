@@ -12,6 +12,7 @@ struct UberMapViewRepresentable: UIViewRepresentable {
     // MARK: - Propriedade
     
     let mapView = MKMapView()
+    let locationManager = LocationManager()
     
     // MARK: - Função
     func makeUIView(context: Context) -> some UIView {
@@ -33,13 +34,19 @@ struct UberMapViewRepresentable: UIViewRepresentable {
 
 // MARK: - Extensão
 extension UberMapViewRepresentable {
-    
     class MapCoordinator: NSObject, MKMapViewDelegate {
         let parent: UberMapViewRepresentable
         
         init(parent: UberMapViewRepresentable) {
             self.parent = parent
             super.init()
+        }
+        
+        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            )
+            
+            parent.mapView.setRegion(region, animated: true)
         }
     }
 }
